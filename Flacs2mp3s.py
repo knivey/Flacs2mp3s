@@ -131,8 +131,10 @@ for f in flacfiles:
       raise Exception
   except:
     pfail("Encoder failed")
+    os.unlink('temp.wav')
     exit(1)
 
+os.unlink('temp.wav')
 pgood("Finished")
 
 
