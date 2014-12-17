@@ -88,7 +88,7 @@ for f in flacfiles:
   tags = getFlacTags(f)
   pgood("Detected the following usable FLAC tags in file \"{0}\":".format(f))
   pgood(str(tags))
-  lame_common = ['lame', '--add-id3v2', '--pad-id3v2', '--ignore-tag-errors']
+  lame_common = ['lame', '--add-id3v2', '--pad-id3v2', '--ignore-tag-errors', '--replaygain-accurate']
   for tag, value in tags.items():
     if tag is 'ARTIST':
       lame_common += ['--ta', value]
