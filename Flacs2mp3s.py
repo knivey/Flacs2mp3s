@@ -106,20 +106,26 @@ for f in flacfiles:
   lame320 = lame_common+['-b', '320', '-h', f, dir320+'/'+outf]
   lameV2  = lame_common+['-V', '2', '--vbr-new', f, dirV2+'/'+outf]
   lameV0  = lame_common+['-V', '0', '--vbr-new', f, dirV0+'/'+outf]
-  
-  pgood("* [{0}/{1}] Starting 320kbps encoder".format(c, numFiles))
-  print("Command:  "+str(lame320))
-  subprocess.call(lame320)
-  
-  pgood("* [{0}/{1}] Starting V2 encoder".format(c, numFiles))
-  print("Command:  "+str(lameV2))
-  subprocess.call(lameV2)
-  
-  pgood("* [{0}/{1}] Starting V0 encoder".format(c, numFiles))
-  print("Command:  "+str(lameV0))
-  subprocess.call(lameV0)
+  try:
+    pgood("* [{0}/{1}] Starting 320kbps encoder".format(c, numFiles))
+    print("Command:  "+str(lame320))
+    if subprocess.call(lame320) is not 0:
+      raise Exception
+    
+    pgood("* [{0}/{1}] Starting V2 encoder".format(c, numFiles))
+    print("Command:  "+str(lameV2))
+    if subprocess.call(lameV2) is not 0:
+      raise Exception
+    
+    pgood("* [{0}/{1}] Starting V0 encoder".format(c, numFiles))
+    print("Command:  "+str(lameV0))
+    if subprocess.call(lameV0) is not 0:
+      raise Exception
+  except:
+    pfail("Encoder failed")
+    exit(1)
 
-
+pgood("Finished")
 
 
 
