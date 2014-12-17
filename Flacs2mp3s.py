@@ -56,23 +56,37 @@ flacfiles.sort()
 numFiles=len(flacfiles)
 
 pgood("Found {0} FLAC files.".format(numFiles))
-pgood("Creating directorys 320, V2, V0...")
 
-for d in ['320','V2','V0']:
+# Generate a directory name from one of the files
+tags = getFlacTags(flacfiles[0])
+for tag in ['ARTIST', 'ALBUM', 'DATE']:
+  if not tags[tag]:
+    pfail("Failed to generate directory name, flac file missing required tag: "+tag)
+    exit(1)
+dirbase = "../{0} - {1} ({2})".format(tags['ARTIST'], tags['ALBUM'], tags['DATE'])
+dir320 = dirbase+" [320]"
+dirV2  = dirbase+" [V2]"
+dirV0  = dirbase+" [V0]"
+
+pgood("Creating directorys:")
+
+for d in [dir320, dirV2, dirV0]:
   if not os.path.exists(d):
     try:
       os.mkdir(d)
+      pgood(" * \"{0}\"".format(d))
     except OSError as e:
-      pfail("Cannot make directory \"{0}\": {1}".format(d, e.strerror))
+      pfail(" * Cannot make directory \"{0}\": {1}".format(d, e.strerror))
+      exit(1)
   else:
-    pwarn("Directory {0} already exists".format(d))
+    pwarn(" * Directory {0} already exists".format(d))
 
 c = 0
 for f in flacfiles:
   c+=1
   outf = re.sub('.flac$', '.mp3', f)
   tags = getFlacTags(f)
-  pgood("Detected the following usable FLAC tags:")
+  pgood("Detected the following usable FLAC tags in file \"{0}\":".format(f))
   pgood(str(tags))
   lame_common = ['lame', '--add-id3v2', '--pad-id3v2', '--ignore-tag-errors']
   for tag, value in tags.items():
@@ -89,9 +103,9 @@ for f in flacfiles:
     if tag is 'GENRE':
       lame_common += ['--tg', value]
   
-  lame320 = lame_common+['-b', '320', '-h', f, '320/'+outf]
-  lameV2  = lame_common+['-V', '2', '--vbr-new', f, 'V2/'+outf]
-  lameV0  = lame_common+['-V', '0', '--vbr-new', f, 'V0/'+outf]
+  lame320 = lame_common+['-b', '320', '-h', f, dir320+'/'+outf]
+  lameV2  = lame_common+['-V', '2', '--vbr-new', f, dirV2+'/'+outf]
+  lameV0  = lame_common+['-V', '0', '--vbr-new', f, dirV0+'/'+outf]
   
   pgood("* [{0}/{1}] Starting 320kbps encoder".format(c, numFiles))
   print("Command:  "+str(lame320))
