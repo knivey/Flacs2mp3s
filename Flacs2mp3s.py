@@ -112,22 +112,22 @@ for f in flacfiles:
     # SADLY we can't count on lame to support flac decoding, so we make a temp.wav file
     pgood("Decoding flac to wav...")
     print("Command:  "+str(decode))
-    if subprocess.call(decode) is not 0:
+    if subprocess.call(decode) != 0:
       raise Exception
     
     pgood("* [{0}/{1}] Starting 320kbps encoder".format(c, numFiles))
     print("Command:  "+str(lame320))
-    if subprocess.call(lame320) is not 0:
+    if subprocess.call(lame320) != 0:
       raise Exception
     
     pgood("* [{0}/{1}] Starting V2 encoder".format(c, numFiles))
     print("Command:  "+str(lameV2))
-    if subprocess.call(lameV2) is not 0:
+    if subprocess.call(lameV2) != 0:
       raise Exception
     
     pgood("* [{0}/{1}] Starting V0 encoder".format(c, numFiles))
     print("Command:  "+str(lameV0))
-    if subprocess.call(lameV0) is not 0:
+    if subprocess.call(lameV0) != 0:
       raise Exception
   except:
     pfail("Encoder failed")
