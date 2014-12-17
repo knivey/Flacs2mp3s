@@ -16,14 +16,11 @@ def pwarn(text):
   print('\033[93m' + text + '\033[0m')
 
 # Check we have the tools
-rv = subprocess.call('type metaflac', shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-if rv is not 0:
-  pfail("Could not find metaflac executable.")
-  exit(1)
-rv = subprocess.call('type lame', shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-if rv is not 0:
-  pfail("Could not find lame executable.")
-  exit(1)
+for cmd in ['lame', 'metaflac']:
+  rv = subprocess.call('type '+cmd, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+  if rv is not 0:
+    pfail("Could not find {0} executable.".format(cmd))
+    exit(1)
 
 def getFlacTags(f):
   tags = {}

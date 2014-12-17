@@ -1,0 +1,1 @@
+Just a simple script to help myself convert a directory of flac files to 320, V2, and V0 mp3s
