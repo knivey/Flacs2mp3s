@@ -18,7 +18,7 @@ def pwarn(text):
 # Check we have the tools
 for cmd in ['lame', 'metaflac', 'flac']:
   rv = subprocess.call('type '+cmd, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-  if rv is not 0:
+  if rv != 0:
     pfail("Could not find {0} executable.".format(cmd))
     exit(1)
 
