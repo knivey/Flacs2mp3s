@@ -16,7 +16,7 @@ def pwarn(text):
   print('\033[93m' + text + '\033[0m')
 
 # Check we have the tools
-for cmd in ['lame', 'metaflac']:
+for cmd in ['lame', 'metaflac', 'flac']:
   rv = subprocess.call('type '+cmd, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
   if rv is not 0:
     pfail("Could not find {0} executable.".format(cmd))
@@ -103,10 +103,18 @@ for f in flacfiles:
     if tag is 'GENRE':
       lame_common += ['--tg', value]
   
-  lame320 = lame_common+['-b', '320', '-h', f, dir320+'/'+outf]
-  lameV2  = lame_common+['-V', '2', '--vbr-new', f, dirV2+'/'+outf]
-  lameV0  = lame_common+['-V', '0', '--vbr-new', f, dirV0+'/'+outf]
+  lame320 = lame_common+['-b', '320', '-h', 'temp.wav', dir320+'/'+outf]
+  lameV2  = lame_common+['-V', '2', '--vbr-new', 'temp.wav', dirV2+'/'+outf]
+  lameV0  = lame_common+['-V', '0', '--vbr-new', 'temp.wav', dirV0+'/'+outf]
+  decode  = ['flac', '--decode', f, '--force', '--output-name=temp.wav']
+  
   try:
+    # SADLY we can't count on lame to support flac decoding, so we make a temp.wav file
+    pgood("Decoding flac to wav...")
+    print("Command:  "+str(decode))
+    if subprocess.call(decode) is not 0:
+      raise Exception
+    
     pgood("* [{0}/{1}] Starting 320kbps encoder".format(c, numFiles))
     print("Command:  "+str(lame320))
     if subprocess.call(lame320) is not 0:
